@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-header__brand">
+        <svg class="app-header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <h1 class="app-header__title">Kanban Board</h1>
+      </div>
+      <div class="app-header__tools">
+        <div class="search-bar">
+          <svg class="search-bar__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" class="search-bar__input" id="search-input" placeholder="Search tasks..." autocomplete="off">
+          <button class="search-bar__clear" id="search-clear" title="Clear search">&times;</button>
+        </div>
+        <button class="tool-btn" id="theme-toggle" title="Toggle theme">
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="dropdown">
+          <button class="tool-btn" id="menu-btn" title="Menu">&#x22EF;</button>
+          <div class="dropdown__menu" id="dropdown-menu">
+            <button class="dropdown__item" id="export-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Board
+            </button>
+            <button class="dropdown__item" id="import-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Import Board
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <input type="file" id="import-file" accept=".json" hidden>
+
+  <main class="board" role="main"></main>
+
+  <div class="modal" role="dialog" aria-labelledby="modal-heading" aria-modal="true">
+    <div class="modal__overlay"></div>
+    <div class="modal__content">
+      <button class="modal__close-btn modal__cancel-btn" title="Close" aria-label="Close">&times;</button>
+      <h2 class="modal__heading" id="modal-heading">Add Task</h2>
+      <form class="modal__form">
+        <div class="form-group">
+          <label for="modal-title" class="form-label">Title</label>
+          <input type="text" id="modal-title" class="form-input" placeholder="e.g. Design system mockups" required autocomplete="off" maxlength="100">
+          <span class="form-counter" id="title-counter">0/100</span>
+        </div>
+        <div class="form-group">
+          <label for="modal-description" class="form-label">Description</label>
+          <textarea id="modal-description" class="form-textarea" placeholder="Add details, notes, or links..." rows="4" maxlength="500"></textarea>
+          <span class="form-counter" id="desc-counter">0/500</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="modal-priority" class="form-label">Priority</label>
+            <select id="modal-priority" class="form-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="modal-due" class="form-label">Due Date</label>
+            <input type="date" id="modal-due" class="form-input">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="modal-column" class="form-label">Column</label>
+          <select id="modal-column" class="form-select"></select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost modal__cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn--primary modal__save-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
