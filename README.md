@@ -23,7 +23,6 @@ A lightweight, browser-based Kanban board for managing tasks locally.
 Optional: serve with a simple static server during development:
 
 ```
-python3 -m http.server 8000
 open http://localhost:8000
 ```
 
